@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILENT ExE - Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-glow { background: radial-gradient(circle at center, #1e1b4b 0%, #090514 100%); }
+        .glass-panel { background: rgba(15, 11, 28, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(139, 92, 246, 0.25); box-shadow: 0 0 35px rgba(139, 92, 246, 0.15); }
+        .neon-btn { background: linear-gradient(90deg, #6d28d9, #a855f7); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); transition: all 0.3s ease; }
+        .neon-btn:hover { box-shadow: 0 0 25px rgba(168, 85, 247, 0.7); transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-glow h-screen flex items-center justify-center font-sans overflow-hidden">
+
+    <div class="glass-panel w-[400px] rounded-[35px] p-8 relative flex flex-col items-center">
+        <div class="text-center mb-4">
+            <h2 class="text-white font-black text-2xl tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-fuchsia-300">
+                SILENT ExE
+            </h2>
+            <p class="text-purple-400/70 text-[10px] tracking-widest uppercase font-mono">Management Portal</p>
+        </div>
+
+        <div class="w-32 h-32 rounded-full border-4 border-purple-600/40 p-1 mb-6 shadow-lg shadow-purple-500/20 overflow-hidden">
+            <img src="1.png" alt="Profile" class="w-full h-full object-cover rounded-full">
+        </div>
+
+        <h3 class="text-white text-xl font-semibold self-start mb-6 px-2">Staff Login</h3>
+
+        <div class="w-full space-y-4">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-purple-400">👤</span>
+                <input type="text" id="username" placeholder="Username" class="w-full bg-slate-950/90 border border-purple-900/40 rounded-full py-3 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-all text-sm font-mono">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-purple-400">🔒</span>
+                <input type="password" id="password" placeholder="Password" class="w-full bg-slate-950/90 border border-purple-900/40 rounded-full py-3 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-all text-sm font-mono">
+            </div>
+
+            <button onclick="handleLogin()" class="w-full neon-btn text-white font-bold py-3.5 rounded-full mt-6 text-sm tracking-widest uppercase">
+                Sign In
+            </button>
+        </div>
+    </div>
+
+    <script>
+        if(!localStorage.getItem('resellers')) localStorage.setItem('resellers', JSON.stringify([]));
+
+        function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if(user === "SILENTEXEOUSSAMAXX" && pass === "OU") {
+                localStorage.setItem('currentUser', JSON.stringify({ role: 'admin', username: 'SILENT ExE' }));
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            const resellers = JSON.parse(localStorage.getItem('resellers'));
+            const foundReseller = resellers.find(r => r.username === user && r.password === pass);
+
+            if(foundReseller) {
+                localStorage.setItem('currentUser', JSON.stringify({ role: 'reseller', username: user }));
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Access Denied: Bad Credentials.');
+            }
+        }
+    </script>
+</body>
+</html>
