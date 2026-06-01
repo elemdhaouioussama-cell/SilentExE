@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILENT ExE - GAME ACCESS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-glow { background: radial-gradient(circle at center, #0f0a1c 0%, #020105 100%); }
+        .glass-panel {
+            background: rgba(13, 9, 23, 0.8);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2);
+        }
+        .neon-btn {
+            background: linear-gradient(90deg, #7c3aed, #c084fc);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            box-shadow: 0 0 25px rgba(124, 58, 237, 0.8);
+            transform: scale(1.01);
+        }
+    </style>
+</head>
+<body class="bg-glow h-screen flex items-center justify-center font-sans overflow-hidden">
+
+    <div class="glass-panel w-[88%] max-w-[380px] rounded-[30px] p-7 flex flex-col items-center">
+        <!-- Logo Header -->
+        <div class="text-center mb-3">
+            <h2 class="text-white font-black text-xl tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">
+                SILENT ExE CHEAT
+            </h2>
+            <p class="text-purple-400/60 text-[9px] tracking-widest font-mono">Game Executer Login</p>
+        </div>
+
+        <!-- Custom Photo (2.png) -->
+        <div class="w-28 h-28 rounded-full border-4 border-purple-500/30 p-1 mb-5 shadow-lg shadow-purple-500/20 overflow-hidden">
+            <img src="2.png" alt="Game Injector Logo" class="w-full h-full object-cover rounded-full">
+        </div>
+
+        <h3 class="text-white text-md font-bold self-start mb-4 px-1 tracking-wide">Enter Cheat Key:</h3>
+
+        <!-- Form Elements -->
+        <div class="w-full space-y-3.5">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-purple-400 text-sm">🎫</span>
+                <input type="text" id="keyUser" placeholder="SILENT-XXXX-XXXX" class="w-full bg-slate-950 border border-purple-950 rounded-full py-3 pl-11 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-all text-xs font-mono tracking-wider">
+            </div>
+
+            <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-purple-400 text-sm">🔒</span>
+                <input type="password" id="keyPass" placeholder="EXE-XXXX-XXXX" class="w-full bg-slate-950 border border-purple-950 rounded-full py-3 pl-11 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-all text-xs font-mono tracking-wider">
+            </div>
+
+            <button onclick="validateKey()" class="w-full neon-btn text-white font-black py-3 rounded-full mt-4 text-xs tracking-widest uppercase">
+                Launch & Inject Game
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function validateKey() {
+            const uKey = document.getElementById('keyUser').value.trim();
+            const pKey = document.getElementById('keyPass').value.trim();
+            
+            // Getting shared keys database from LocalStorage
+            const keys = JSON.parse(localStorage.getItem('generatedKeys')) || [];
+            const match = keys.find(k => k.userKey === uKey && k.passKey === pKey);
+
+            if(match) {
+                alert(`✅ Key Accepted!\nWelcome to SILENT ExE Menu.\nType: ${match.days === 9999 ? 'Admin' : match.days + ' Days'}`);
+                
+                // Hna t9der t-trigger l-game functions dyalk f l-APK 
+                // dialak direct (Injecting Menu).
+            } else {
+                alert('❌ Access Denied: Invalid Key Authentication.');
+            }
+        }
+    </script>
+</body>
+</html>
