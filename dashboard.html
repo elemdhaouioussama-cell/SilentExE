@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILENT ExE - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-glow { background: radial-gradient(circle at center, #0c071a 0%, #020107 100%); }
+        .glass-card { background: rgba(22, 16, 38, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(147, 51, 234, 0.15); }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-glow min-h-screen text-slate-300 font-sans p-6">
+
+    <div class="max-w-6xl mx-auto flex justify-between items-center mb-8 bg-slate-950/60 p-4 rounded-2xl border border-purple-950/40">
+        <div>
+            <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400 tracking-wider">SILENT ExE PANEL</h1>
+            <p id="userWelcome" class="text-xs text-purple-400 font-mono mt-0.5"></p>
+        </div>
+        <button onclick="logout()" class="bg-purple-950/30 border border-purple-800/40 text-purple-300 px-4 py-2 rounded-xl text-xs hover:bg-purple-900/40 transition font-mono uppercase">Disconnect</button>
+    </div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div id="adminPanel" class="hidden md:col-span-2 space-y-6">
+            <div class="glass-card p-6 rounded-2xl">
+                <h3 class="text-purple-400 font-bold mb-4 text-xs uppercase tracking-widest">➕ Create Reseller Account</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="text" id="resellerUser" placeholder="Reseller Username" class="bg-slate-950 border border-purple-950/60 rounded-xl p-3 text-xs font-mono text-white focus:outline-none focus:border-purple-500">
+                    <input type="password" id="resellerPass" placeholder="Reseller Password" class="bg-slate-950 border border-purple-950/60 rounded-xl p-3 text-xs font-mono text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <button onclick="createReseller()" class="mt-4 w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2.5 rounded-xl text-xs transition uppercase">Deploy Reseller</button>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl">
+                <h3 class="text-purple-400 font-bold mb-4 text-xs uppercase tracking-widest">🎛️ Active Resellers & Credits</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead>
+                            <tr class="border-b border-purple-950 text-purple-400/70">
+                                <th class="pb-3">Reseller</th>
+                                <th class="pb-3">Wallet</th>
+                                <th class="pb-3 text-right">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resellerTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminKeyPanel" class="hidden glass-card p-6 rounded-2xl h-fit">
+            <h3 class="text-fuchsia-400 font-bold mb-4 text-xs uppercase tracking-widest">👑 System Admin Keys</h3>
+            <button onclick="generateAdminKey()" class="w-full bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-2.5 rounded-xl text-xs transition uppercase">Gen Master Key</button>
+            <div id="adminKeyDisplay" class="mt-4 hidden animate-fade-in p-3 bg-slate-950 border border-purple-900/40 rounded-xl font-mono text-[11px] text-fuchsia-300"></div>
+        </div>
+
+        <div id="resellerPanel" class="hidden md:col-span-3 glass-card p-6 rounded-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-purple-400 font-bold text-xs uppercase tracking-widest">🎫 Key Generation Engine</h3>
+                <div class="bg-purple-950/40 border border-purple-800/40 text-purple-300 px-4 py-1.5 rounded-full text-xs font-mono">
+                    Balance: <span id="myPointsDisplay" class="font-bold text-white">0</span> Pts
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border border-purple-950 bg-slate-950/40 p-5 rounded-xl flex flex-col justify-between hover:border-purple-500/40 transition group">
+                    <div>
+                        <div class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">Standard License</div>
+                        <h4 class="text-xl font-black text-white mb-2">1 DAY PASS</h4>
+                        <p class="text-xs text-slate-400 font-mono">Cost: <span class="text-purple-400 font-bold">10 Pts</span></p>
+                    </div>
+                    <button onclick="mintResellerKey(1, 10)" class="mt-6 w-full bg-purple-950 group-hover:bg-purple-600 text-purple-300 group-hover:text-white py-2 rounded-lg text-xs font-bold font-mono transition-all">Mint 1D</button>
+                </div>
+
+                <div class="border border-purple-950 bg-slate-950/40 p-5 rounded-xl flex flex-col justify-between hover:border-fuchsia-500/40 transition group">
+                    <div>
+                        <div class="text-[10px] font-bold text-fuchsia-400 uppercase tracking-widest mb-1">Advanced License</div>
+                        <h4 class="text-xl font-black text-white mb-2">3 DAYS PASS</h4>
+                        <p class="text-xs text-slate-400 font-mono">Cost: <span class="text-fuchsia-400 font-bold">25 Pts</span></p>
+                    </div>
+                    <button onclick="mintResellerKey(3, 25)" class="mt-6 w-full bg-purple-950 group-hover:bg-fuchsia-600 text-fuchsia-300 group-hover:text-white py-2 rounded-lg text-xs font-bold font-mono transition-all">Mint 3D</button>
+                </div>
+
+                <div class="border border-purple-950 bg-slate-950/40 p-5 rounded-xl flex flex-col justify-between hover:border-mauve-500/40 transition group">
+                    <div>
+                        <div class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Premium License</div>
+                        <h4 class="text-xl font-black text-white mb-2">7 DAYS PASS</h4>
+                        <p class="text-xs text-slate-400 font-mono">Cost: <span class="text-indigo-400 font-bold">50 Pts</span></p>
+                    </div>
+                    <button onclick="mintResellerKey(7, 50)" class="mt-6 w-full bg-purple-950 group-hover:bg-indigo-600 text-indigo-300 group-hover:text-white py-2 rounded-lg text-xs font-bold font-mono transition-all">Mint 7D</button>
+                </div>
+            </div>
+
+            <div id="resellerKeyDisplay" class="mt-6 hidden animate-fade-in p-4 bg-purple-950/20 border border-purple-500/30 rounded-xl font-mono text-xs max-w-md mx-auto text-center"></div>
+        </div>
+    </div>
+
+    <script>
+        // Check session authority parameters
+        const userSession = JSON.parse(localStorage.getItem('currentUser'));
+        if(!userSession) { window.location.href = 'index.html'; }
+        
+        // Safety checking databases
+        if(!localStorage.getItem('generatedKeys')) localStorage.setItem('generatedKeys', JSON.stringify([]));
+        if(!localStorage.getItem('resellers')) localStorage.setItem('resellers', JSON.stringify([]));
+
+        document.getElementById('userWelcome').innerText = `Operator: ${userSession.username} // Authority: ${userSession.role.toUpperCase()}`;
+
+        // View Router
+        if(userSession.role === 'admin') {
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('adminKeyPanel').classList.remove('hidden');
+            renderResellers();
+        } else if (userSession.role === 'reseller') {
+            document.getElementById('resellerPanel').classList.remove('hidden');
+            updateResellerPointsDisplay();
+        }
+
+        // --- SECTION A: ADMIN ACTIONS ---
+        function renderResellers() {
+            const resellers = JSON.parse(localStorage.getItem('resellers')) || [];
+            const tbody = document.getElementById('resellerTableBody');
+            tbody.innerHTML = '';
+            
+            resellers.forEach((reseller, index) => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-purple-950/40 hover:bg-purple-950/10">
+                        <td class="py-3 font-semibold text-white">${reseller.username}</td>
+                        <td class="py-3 text-purple-400">${reseller.points} Pts</td>
+                        <td class="py-3 text-right space-x-1">
+                            <button onclick="adjustPoints(${index}, 10)" class="bg-purple-950 border border-purple-800 text-purple-300 text-[10px] px-2 py-0.5 rounded transition hover:bg-purple-900">+10</button>
+                            <button onclick="adjustPoints(${index}, -10)" class="bg-purple-950 border border-purple-800 text-purple-400 text-[10px] px-2 py-0.5 rounded transition hover:bg-purple-900">-10</button>
+                            <button onclick="deleteReseller(${index})" class="bg-red-950/40 border border-red-900 text-red-400 text-[10px] px-2 py-0.5 rounded transition hover:bg-red-900">Remove</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function createReseller() {
+            const u = document.getElementById('resellerUser').value.trim();
+            const p = document.getElementById('resellerPass').value.trim();
+            if(!u || !p) return alert('Inputs empty!');
+            
+            let resellers = JSON.parse(localStorage.getItem('resellers'));
+            if(resellers.some(r => r.username === u)) return alert('Identity registered previously.');
+
+            resellers.push({ username: u, password: p, points: 0 });
+            localStorage.setItem('resellers', JSON.stringify(resellers));
+            renderResellers();
+            
+            document.getElementById('resellerUser').value = ''; 
+            document.getElementById('resellerPass').value = '';
+        }
+
+        function deleteReseller(index) {
+            let resellers = JSON.parse(localStorage.getItem('resellers'));
+            resellers.splice(index, 1);
+            localStorage.setItem('resellers', JSON.stringify(resellers));
+            renderResellers();
+        }
+
+        function adjustPoints(index, amount) {
+            let resellers = JSON.parse(localStorage.getItem('resellers'));
+            resellers[index].points = Math.max(0, resellers[index].points + amount);
+            localStorage.setItem('resellers', JSON.stringify(resellers));
+            renderResellers();
+        }
+
+        function generateRandomStr() {
+            return Math.floor(1000 + Math.random() * 9000);
+        }
+
+        function generateAdminKey() {
+            const rU = generateRandomStr(); 
+            const rP = generateRandomStr();
+            const keyUser = `SILENT-ADMIN-${rU}`;
+            const keyPass = `EXE-ADMIN-${rP}`;
+
+            let keys = JSON.parse(localStorage.getItem('generatedKeys'));
+            keys.push({ userKey: keyUser, passKey: keyPass, days: 9999 }); 
+            localStorage.setItem('generatedKeys', JSON.stringify(keys));
+
+            const display = document.getElementById('adminKeyDisplay');
+            display.classList.remove('hidden');
+            display.innerHTML = `
+                <div class="text-fuchsia-400 font-bold mb-1">🔑 MASTER TOKEN BATCH:</div>
+                <div>ID: <span class="text-white select-all">${keyUser}</span></div>
+                <div>PW: <span class="text-white select-all">${keyPass}</span></div>
+            `;
+        }
+
+        // --- SECTION B: RESELLER ACTIONS ---
+        function updateResellerPointsDisplay() {
+            const resellers = JSON.parse(localStorage.getItem('resellers'));
+            const current = resellers.find(r => r.username === userSession.username);
+            if(current) document.getElementById('myPointsDisplay').innerText = current.points;
+        }
+
+        function mintResellerKey(days, cost) {
+            let resellers = JSON.parse(localStorage.getItem('resellers'));
+            let idx = resellers.findIndex(r => r.username === userSession.username);
+            
+            if(resellers[idx].points < cost) return alert('Insufficient Credits.');
+
+            // Deduct points from wallet node
+            resellers[idx].points -= cost;
+            localStorage.setItem('resellers', JSON.stringify(resellers));
+            updateResellerPointsDisplay();
+
+            // Suffix parameters calculation
+            const p1U = generateRandomStr(); const p2U = generateRandomStr();
+            const p1P = generateRandomStr(); const p2P = generateRandomStr();
+            
+            const clientUserKey = `SILENT-${p1U}-${p2U}`;
+            const clientPassKey = `EXE-${p1P}-${p2P}`;
+
+            let keys = JSON.parse(localStorage.getItem('generatedKeys'));
+            keys.push({ userKey: clientUserKey, passKey: clientPassKey, days: days });
+            localStorage.setItem('generatedKeys', JSON.stringify(keys));
+
+            const display = document.getElementById('resellerKeyDisplay');
+            display.classList.remove('hidden');
+            display.innerHTML = `
+                <div class="text-purple-400 font-bold mb-2 uppercase tracking-wider">🎉 LICENSE DEPLOYED SUCCESSFULLY (${days} Days)</div>
+                <div class="text-slate-300">USER: <span class="text-white font-bold select-all">${clientUserKey}</span></div>
+                <div class="text-slate-300 mt-1">PASS: <span class="text-white font-bold select-all">${clientPassKey}</span></div>
+            `;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
